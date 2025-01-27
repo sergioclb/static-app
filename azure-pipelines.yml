@@ -1,0 +1,56 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  artifactName: 'drop'
+  ec2Host: 'ec2-54-82-187-145.compute-1.amazonaws.com'
+  ec2User: 'ubuntu'
+  sshKeyPath: '/home/ubuntu/.ssh/id_rsa'
+  artifactDirectory: '$(Build.ArtifactStagingDirectory)'
+
+stages:
+- stage: Build
+  displayName: "Build Stage"
+  jobs:
+  - job: BuildJob
+    displayName: 'Prepare HTML files'
+    steps:
+    - checkout: self
+
+    - script: |
+        echo "Preparing index.html for deployment..."
+        mkdir -p $(Build.ArtifactStagingDirectory)/www
+        cp index.html $(Build.ArtifactStagingDirectory)/www/
+      displayName: "Prepare HTML file for deployment"
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/www'
+        ArtifactName: $(artifactName)
+        publishLocation: 'Container'
+
+- stage: Deploy
+  displayName: "Deploy to EC2"
+  dependsOn: Build
+  jobs:
+  - job: DeployJob
+    displayName: 'Deploy HTML to EC2'
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: $(artifactName)
+    
+    - task: CopyFilesOverSSH@0
+      inputs:
+        sshEndpoint: 'AWS EC2 Service'
+        sourceFolder: '$(Pipeline.Workspace)/$(artifactName)/'
+        targetFolder: '/home/ubuntu/app'
+
+    - task: SSH@0
+      inputs:
+        sshEndpoint: 'AWS EC2 Service'
+        scriptPath: './deploy.sh'
+        failOnStandardError: true
