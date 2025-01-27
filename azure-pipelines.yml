@@ -42,6 +42,11 @@ stages:
     - task: DownloadBuildArtifacts@0
       inputs:
         artifactName: $(artifactName)
+
+    - script: |
+        echo "Listing downloaded artifact folder..."
+        ls -R $(Pipeline.Workspace)/$(artifactName)/
+      displayName: 'List downloaded artifact folder'
     
     - task: CopyFilesOverSSH@0
       inputs:
