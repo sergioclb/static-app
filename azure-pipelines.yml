@@ -45,13 +45,13 @@ stages:
 
     - script: |
         echo "Listing downloaded artifact folder..."
-        ls -R $(Pipeline.Workspace)/$(artifactName)/
+        ls -R $(Pipeline.Workspace)/_temp/
       displayName: 'List downloaded artifact folder'
     
     - task: CopyFilesOverSSH@0
       inputs:
         sshEndpoint: 'AWS EC2 Service'
-        sourceFolder: '$(Pipeline.Workspace)/$(artifactName)/'
+        sourceFolder: '$(Pipeline.Workspace)/_temp/$(artifactName)/'
         targetFolder: '/var/www/html'
 
     - task: SSH@0
