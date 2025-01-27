@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd /home/ubuntu/app
+sudo systemctl start nginx
 
-npm install
-
-node index.js  
+sudo systemctl enable nginx
