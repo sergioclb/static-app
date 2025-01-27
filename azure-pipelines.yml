@@ -47,7 +47,7 @@ stages:
       inputs:
         sshEndpoint: 'AWS EC2 Service'
         sourceFolder: '$(Pipeline.Workspace)/$(artifactName)/'
-        targetFolder: '/home/ubuntu/app'
+        targetFolder: '/var/www/html'
 
     - task: SSH@0
       inputs:
