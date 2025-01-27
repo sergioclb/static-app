@@ -23,7 +23,7 @@ stages:
     - script: |
         echo "Preparing index.html for deployment..."
         mkdir -p $(Build.ArtifactStagingDirectory)/www
-        cp index.html $(Build.ArtifactStagingDirectory)/www/
+        cp ./app/index.html $(Build.ArtifactStagingDirectory)/www/
       displayName: "Prepare HTML file for deployment"
 
     - task: PublishBuildArtifacts@1
